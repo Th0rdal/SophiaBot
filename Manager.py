@@ -30,7 +30,7 @@ class Manager:
 
     def train(self, text):
         self.trainFlag = True
-        self.lastTest = text
+        self.lastTest = text#TODO implementing
         self.ai1 = self.ai.answer(text)
         self.ai2 = self.ai.answer(text)
         self.answerList.append(self.ai1)
