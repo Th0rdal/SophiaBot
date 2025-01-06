@@ -48,6 +48,19 @@ def filter_titles_by_prompt(articles, prompt, top_n=5):
     return scores[:top_n]  # Gib die Top-N-Artikel zurück
 
 
+def save_articles_as_tokens(articles, output_file):
+    """Speichert die Artikeltexte als Token-IDs in einer JSON-Datei."""
+    tokenized_articles = []
+    for article in articles:
+        tokens = tokenizer.encode(article["text"], truncation=True, max_length=1024)
+        tokenized_articles.append({"title": article["title"], "tokens": tokens})
+
+    # Speichern der tokenisierten Artikel
+    with open(output_file, "w", encoding="utf-8") as f:
+        json.dump(tokenized_articles, f, ensure_ascii=False, indent=4)
+    print(f"[INFO] Tokenisierte Artikel wurden in {output_file} gespeichert.")
+
+
 def main():
     # Bereinigte Daten laden
     cleaned_file_path = "./processed/History_cleaned.json"
@@ -64,6 +77,10 @@ def main():
     print(f"[INFO] Top {top_n} Artikel basierend auf Titeln:")
     for article, score in filtered_articles:
         print(f"Title: {article['title']}, Log-Likelihood: {score:.4f}")
+
+    # Artikeltexte als Tokens speichern
+    token_output_file = "./processed/History_tokenized.json"
+    save_articles_as_tokens([article for article, _ in filtered_articles], token_output_file)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 # preprocessing_main.py
 from download_wiki import fetch_wikipedia_articles
 from clean import clean_text, save_cleaned_data
-from likelihood import load_cleaned_data, calculate_title_log_likelihood, filter_titles_by_prompt
+from likelihood import *
 from utils import load_data
 
 def main():
@@ -42,9 +42,8 @@ def main():
 
     # ---------------------------------------------------------------------------------
 
-    # Bereinigte Daten laden
     cleaned_file_path = "./processed/History_cleaned.json"
-    articles = load_data(cleaned_file_path)
+    articles = load_cleaned_data(cleaned_file_path)
 
     # Prompt definieren
     prompt = "Describe historical events:"
@@ -56,7 +55,11 @@ def main():
     # Ergebnisse anzeigen
     print(f"[INFO] Top {top_n} Artikel basierend auf Titeln:")
     for article, score in filtered_articles:
-        print(f"    Title: {article['title']}, Log-Likelihood: {score:.4f}")
+        print(f"Title: {article['title']}, Log-Likelihood: {score:.4f}")
+
+    # Artikeltexte als Tokens speichern
+    token_output_file = "./processed/History_tokenized.json"
+    save_articles_as_tokens([article for article, _ in filtered_articles], token_output_file)
 
 if __name__ == "__main__":
     main()
