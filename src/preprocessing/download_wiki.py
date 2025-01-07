@@ -1,5 +1,9 @@
 import requests
 import json
+from pathlib import Path
+
+# Projekt-Root relativ zu diesem Skript
+project_root = Path(__file__).parent.parent.parent
 
 def fetch_wikipedia_articles(category_name, max_articles, language="en"):
     api_url = f"https://{language}.wikipedia.org/w/api.php"
@@ -33,7 +37,7 @@ def fetch_wikipedia_articles(category_name, max_articles, language="en"):
         articles.append({"title": page_data.get("title"), "text": page_data.get("extract")})
 
     # Speichern
-    output_file = f"./raw/{category_name}_dump.json"
+    output_file = project_root / "resources" / "processed" / f"{category_name}_dump.json"
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(articles, f, ensure_ascii=False, indent=4)
     print(f"Saved {len(articles)} articles to {output_file}")
