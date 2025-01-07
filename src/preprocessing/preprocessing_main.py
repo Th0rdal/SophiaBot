@@ -45,23 +45,5 @@ def main():
 
     # ---------------------------------------------------------------------------------
 
-    cleaned_file_path = f"./processed/{wiki_category}_cleaned.json"
-    articles = load_cleaned_data(cleaned_file_path)
-
-    # Prompt definieren
-    prompt = "What are important kinds of philosophy?"
-
-
-    filtered_articles = filter_titles_by_prompt(articles, prompt, top_n=top_article_count)
-
-    # Ergebnisse anzeigen
-    print(f"[INFO] Top {top_n} Artikel basierend auf Titeln:")
-    for article, score in filtered_articles:
-        print(f"Title: {article['title']}, Log-Likelihood: {score:.4f}")
-
-    # Artikeltexte als Tokens speichern
-    token_output_file = f"./processed/{wiki_category}_tokenized.json"
-    save_articles_as_tokens([article for article, _ in filtered_articles], token_output_file)
-
 if __name__ == "__main__":
     main()
