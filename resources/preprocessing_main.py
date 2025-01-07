@@ -4,14 +4,16 @@ from clean import clean_text, save_cleaned_data
 from likelihood import *
 from utils import load_data
 
+wiki_category = "Ancient Rome"
+
 def main():
     # Beispiel: Wikipedia-Daten herunterladen
-    articles = fetch_wikipedia_articles("History", max_articles=20, language="en")
+    fetch_wikipedia_articles(wiki_category, max_articles=80, language="en")
     print(f"=" * 60)
 
     # ---------------------------------------------------------------------------------
-    input_file = "./raw/History_dump.json"
-    output_file = "./processed/History_cleaned.json"
+    input_file = f"./raw/{wiki_category}_dump.json"
+    output_file = f"./processed/{wiki_category}_cleaned.json"
 
     # Lade die Rohdaten
     articles = load_data(input_file)
@@ -42,11 +44,11 @@ def main():
 
     # ---------------------------------------------------------------------------------
 
-    cleaned_file_path = "./processed/History_cleaned.json"
+    cleaned_file_path = f"./processed/{wiki_category}_cleaned.json"
     articles = load_cleaned_data(cleaned_file_path)
 
     # Prompt definieren
-    prompt = "Describe historical events:"
+    prompt = "What are important kinds of philosophy?"
 
     # Titel-basiertes Filtern durchführen
     top_n = 5
@@ -58,7 +60,7 @@ def main():
         print(f"Title: {article['title']}, Log-Likelihood: {score:.4f}")
 
     # Artikeltexte als Tokens speichern
-    token_output_file = "./processed/History_tokenized.json"
+    token_output_file = f"./processed/{wiki_category}_tokenized.json"
     save_articles_as_tokens([article for article, _ in filtered_articles], token_output_file)
 
 if __name__ == "__main__":

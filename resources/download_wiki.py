@@ -1,7 +1,7 @@
 import requests
 import json
 
-def fetch_wikipedia_articles(category_name, max_articles=30, language="en"):
+def fetch_wikipedia_articles(category_name, max_articles, language="en"):
     api_url = f"https://{language}.wikipedia.org/w/api.php"
     session = requests.Session()
 
