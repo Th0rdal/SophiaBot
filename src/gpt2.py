@@ -4,6 +4,13 @@ import torch
 from transformers import Trainer
 import json
 import os
+from pathlib import Path
+
+# Projekt-Root relativ zu diesem Skript
+project_root = Path(__file__).parent.parent
+
+# Relativer Pfad zur Datei
+file_path = project_root / "resources" / "fineTuning" / "training.json"
 
 class AI:
     def __init__(self):
@@ -73,7 +80,7 @@ class AI:
 
     def train(self, dataset_name="wikitext", split="train", epochs=1, batch_size=8):
         # Load the dataset from the JSON file
-        with open("C:\\Users\\patrick\\PycharmProjects\\SophiaBot\\resources\\fineTuning\\training.json", "r", encoding="utf-8") as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         # Convert the JSON data to a HuggingFace Dataset
