@@ -1,6 +1,110 @@
-{
-    "prompt": "Was ist der unterschied zwischen sonne und mond",
-    "ai1": "Was ist der unterschied zwischen sonne und mondem den Heiligung nicht auf gewandten eine Welt-Getzen. Beben bei h\u00e4rken verlagte, wird sind l\u00f6ssten Zeit mit ihrer Einige Verkeiten.\"\nThe following was the text of an address given by Sonderlich at his death: The last time we met in Berlin I had",
-    "ai2": "Was ist der unterschied zwischen sonne und monden. Werden beelten die ihren sein Kulturk, dass wir dem H\u00e4ngliche ausgew\u00fchrung des Verhalbstaufen bis eigentlich kann in den Leben verzeichte Sohn von R\u00f6diger and Karl Erschaud: Das Neue Zeit vom hochluss anzahlern",
-    "correct_answer": "ai1"
-}
+[
+    {
+        "prompt": "Was ist der Unterschied zwischen Sonne und Mond?",
+        "ai1": "Die Sonne ist ein Stern, der Mond ein Trabant der Erde.",
+        "ai2": "Die Sonne leuchtet, der Mond scheint.",
+        "correct_answer": "ai1"
+    },
+    {
+        "prompt": "Was ist Künstliche Intelligenz?",
+        "ai1": "Künstliche Intelligenz ist ein Teilgebiet der Informatik.",
+        "ai2": "Künstliche Intelligenz ist, wenn Computer sprechen können.",
+        "correct_answer": "ai1"
+    },
+    {
+        "prompt": "Wie funktioniert ein Auto?",
+        "ai1": "Ein Auto fährt mit einem Motor, der Energie in Bewegung umwandelt.",
+        "ai2": "Ein Auto fliegt durch die Luft mit seinen Rädern.",
+        "correct_answer": "ai1"
+    },
+    {
+        "prompt": "Was ist die Hauptstadt von Deutschland?",
+        "ai1": "Die Hauptstadt von Deutschland ist Berlin.",
+        "ai2": "Die Hauptstadt von Deutschland ist Frankfurt.",
+        "correct_answer": "ai1"
+    },
+    {
+        "prompt": "Was ist der Sinn des Lebens?",
+        "ai1": "Der Sinn des Lebens ist subjektiv und für jeden unterschiedlich.",
+        "ai2": "Der Sinn des Lebens ist es, so viel Geld wie möglich zu verdienen.",
+        "correct_answer": "ai1"
+    },
+    {
+        "prompt": "Wie viele Planeten hat unser Sonnensystem?",
+        "ai1": "Unser Sonnensystem hat acht Planeten.",
+        "ai2": "Unser Sonnensystem hat zwölf Planeten.",
+        "correct_answer": "ai1"
+    },
+    {
+        "prompt": "Was ist Python?",
+        "ai1": "Python ist eine Programmiersprache, die einfach zu lernen ist.",
+        "ai2": "Python ist eine giftige Schlange.",
+        "correct_answer": "ai1"
+    },
+    {
+        "prompt": "Wer hat die Relativitätstheorie entwickelt?",
+        "ai1": "Albert Einstein entwickelte die Relativitätstheorie.",
+        "ai2": "Isaac Newton entwickelte die Relativitätstheorie.",
+        "correct_answer": "ai1"
+    },
+    {
+        "prompt": "Was ist die Formel für die Fläche eines Kreises?",
+        "ai1": "Die Formel für die Fläche eines Kreises ist π * r².",
+        "ai2": "Die Formel für die Fläche eines Kreises ist 2π * r.",
+        "correct_answer": "ai1"
+    },
+    {
+        "prompt": "Was ist ein Computer?",
+        "ai1": "Ein Computer ist eine Maschine, die Daten verarbeitet.",
+        "ai2": "Ein Computer ist ein Fahrzeug, das durch die Stadt fährt.",
+        "correct_answer": "ai1"
+    },
+    {
+        "prompt": "Wie kocht man ein Ei?",
+        "ai1": "Man bringt Wasser zum Kochen und legt das Ei hinein.",
+        "ai2": "Man legt das Ei in die Sonne und wartet.",
+        "correct_answer": "ai1"
+    },
+    {
+        "prompt": "Was ist das Internet?",
+        "ai1": "Das Internet ist ein globales Netzwerk, das Menschen verbindet.",
+        "ai2": "Das Internet ist eine Art Telefon.",
+        "correct_answer": "ai1"
+    },
+    {
+        "prompt": "Wie schreibt man eine E-Mail?",
+        "ai1": "Man öffnet ein E-Mail-Programm, schreibt eine Nachricht und klickt auf Senden.",
+        "ai2": "Man schreibt die Nachricht auf Papier und schickt sie per Post.",
+        "correct_answer": "ai1"
+    },
+    {
+        "prompt": "Was ist der Mensch?",
+        "ai1": "Der Mensch ist ein Lebewesen, das denken und kommunizieren kann.",
+        "ai2": "Der Mensch ist ein Roboter.",
+        "correct_answer": "ai1"
+    },
+    {
+        "prompt": "Wie heißt der höchste Berg der Welt?",
+        "ai1": "Der höchste Berg der Welt ist der Mount Everest.",
+        "ai2": "Der höchste Berg der Welt ist der K2.",
+        "correct_answer": "ai1"
+    },
+    {
+        "prompt": "Was bedeutet Demokratie?",
+        "ai1": "Demokratie bedeutet, dass das Volk die Regierung wählt.",
+        "ai2": "Demokratie bedeutet, dass nur eine Person regiert.",
+        "correct_answer": "ai1"
+    },
+	{
+	    "prompt": "Was ist der unterschied zwischen sonne und mond",
+	    "ai1": "Was ist der unterschied zwischen sonne und mondialet.",
+	    "ai2": "Was ist der unterschied zwischen sonne und mondialet.",
+	    "correct_answer": "ai1"
+	},
+	{
+	    "prompt": "Was ist der unterschied zwischen sonne und mond",
+	    "ai1": "Was ist der unterschied zwischen sonne und mondialet, das Man geh\u00f6ren die Deutschland um ein Mittel kann.",
+	    "ai2": "Was ist der unterschied zwischen sonne und mondialet, das w\u00e4hlt? Die Unterrichte von Weltmanung geht keine Relativitieren.",
+	    "correct_answer": "ai1"
+	}
+]

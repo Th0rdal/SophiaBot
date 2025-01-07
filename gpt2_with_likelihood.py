@@ -9,46 +9,8 @@ class AI:
         self.model = AutoModelForCausalLM.from_pretrained(self.modelName)
         self.tokenizer.pad_token = self.tokenizer.eos_token  # Explizit Pad-Token setzen
 
-    def load_cleaned_articles(self, file_path):
-        """Lädt bereinigte Wikipedia-Artikel."""
-        with open(file_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        return data
 
-    def calculate_title_log_likelihood(self, prompt, title):
-        """Berechnet den Log-Likelihood-Score basierend auf dem Titel."""
-        input_text = f"{prompt} {title}"
-        inputs = self.tokenizer(input_text, return_tensors="pt")
-        input_ids = inputs.input_ids
 
-        with torch.no_grad():
-            outputs = self.model(input_ids, labels=input_ids)
-            loss = outputs.loss
-        log_likelihood = -loss.item() * input_ids.size(1)
-        return log_likelihood
-
-    def filter_articles_by_query(self, articles, query, top_n=3):
-        """Filtert die Artikel basierend auf dem Query."""
-        scores = []
-        for article in articles:
-            title = article["title"]
-            score = self.calculate_title_log_likelihood(query, title)
-            scores.append((article, score))
-
-        scores.sort(key=lambda x: x[1], reverse=True)
-        top_articles = scores[:top_n]
-
-        # Zeige die Titel der gefilterten Artikel an
-        print(f"[INFO] Gefilterte Artikel basierend auf dem Query '{query}':")
-        for article, score in top_articles:
-            print(f"  - {article['title']} (Score: {score:.4f})")
-
-        return top_articles
-
-    def truncate_context(self, context, max_tokens):
-        """Trunkiert den Kontext basierend auf der maximalen Tokenanzahl."""
-        tokens = self.tokenizer.encode(context, truncation=True, max_length=max_tokens)
-        return self.tokenizer.decode(tokens, skip_special_tokens=True)
 
     def generate_responses(self, query, articles, num_responses=2, max_response_length=10):
         """Generiert mehrere Antworten basierend auf Query und gefilterten Artikeln."""

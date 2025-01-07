@@ -1,6 +1,8 @@
-import trainingWriter
+from datetime import datetime
+
+import dataManager
 from gpt2 import AI
-import random
+import random, os
 
 class Manager:
 
@@ -9,28 +11,36 @@ class Manager:
         self.lastTest = None
         self.ai2 = None
         self.ai = AI()
-        self.trainProbability = 1
-        self.trainFlag = False
+
+        self.dataPath = "../resources/fineTuning/training.json"
+        self.getTrainingDataProbability = 1
+        self.getTrainingDataFlag = False
+        self.trainingThreshold = 10
+        self.trainingDataCounter = dataManager.count(self.dataPath)
         self.answerList = []
 
     def answer(self, text):
-        if self.trainFlag:
+        if self.getTrainingDataFlag:
             data = {"prompt": self.lastTest, "ai1": self.ai1, "ai2": self.ai2}
             if text == "1":
                 data["correct_answer"] = "ai1"
-                trainingWriter.write(data)
+                dataManager.write(data, self.dataPath)
+                self.trainingDataCounter += 1
             elif text == "2":
                 data["correct_answer"] = "ai2"
-                trainingWriter.write(data)
-            self.trainFlag = False
-        if random.random() < self.trainProbability:
+                dataManager.write(data, self.dataPath)
+                self.trainingDataCounter += 1
+            self.getTrainingDataFlag = False
+            if self.trainingDataCounter >= self.trainingThreshold:
+                self.trainAI()
+        if random.random() < self.getTrainingDataProbability:
             return self.train(text)
         else:
             return self.ai.answer(text)
 
     def train(self, text):
-        self.trainFlag = True
-        self.lastTest = text#TODO implementing
+        self.getTrainingDataFlag = True
+        self.lastTest = text
         self.ai1 = self.ai.answer(text)
         self.ai2 = self.ai.answer(text)
         self.answerList.append(self.ai1)
@@ -41,8 +51,10 @@ class Manager:
         return result
 
     def trainAI(self):
-        #TODO implementing
         self.ai.train()
+        self.ai.load()
+        os.rename(self.dataPath, self.dataPath.rsplit('/', 1)[0] + "/" + datetime.now().strftime("%Y-%m-%d") + "_training.json")
+        open(self.dataPath, 'w').close()
 
 if __name__ == '__main__':
     m = Manager()
