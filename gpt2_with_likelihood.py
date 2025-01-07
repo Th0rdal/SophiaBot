@@ -9,13 +9,6 @@ class AI:
         self.model = AutoModelForCausalLM.from_pretrained(self.modelName)
         self.tokenizer.pad_token = self.tokenizer.eos_token  # Explizit Pad-Token setzen
 
-        self.temperature = 1.0
-        self.maxLength = 100
-        self.top_k = 50
-        self.top_p = 0.9
-        self.repetitionPenalty = 1.2
-        self.doSample = True
-
     def load_cleaned_articles(self, file_path):
         """Lädt bereinigte Wikipedia-Artikel."""
         with open(file_path, "r", encoding="utf-8") as f:
@@ -34,7 +27,7 @@ class AI:
         log_likelihood = -loss.item() * input_ids.size(1)
         return log_likelihood
 
-    def filter_articles_by_query(self, articles, query, top_n=5):
+    def filter_articles_by_query(self, articles, query, top_n=3):
         """Filtert die Artikel basierend auf dem Query."""
         scores = []
         for article in articles:
@@ -57,65 +50,85 @@ class AI:
         tokens = self.tokenizer.encode(context, truncation=True, max_length=max_tokens)
         return self.tokenizer.decode(tokens, skip_special_tokens=True)
 
-    def generate_responses(self, query, articles_path, num_responses=2):
-        """Generiert mehrere Antworten basierend auf dem Query und Artikeln."""
-        articles = self.load_cleaned_articles(articles_path)
+    def generate_responses(self, query, articles, num_responses=2, max_response_length=10):
+        """Generiert mehrere Antworten basierend auf Query und gefilterten Artikeln."""
+        # Filtere relevante Artikel
         filtered_articles = self.filter_articles_by_query(articles, query, top_n=3)
         context = " ".join([article["text"] for article, _ in filtered_articles])
 
+        # Berechne verfügbare Länge für den Kontext
         query_tokens = self.tokenizer.encode(query, truncation=True)
-        max_context_tokens = self.maxLength - len(query_tokens)
+        max_context_tokens = 512 - len(query_tokens)
         context = self.truncate_context(context, max_context_tokens)
+
+        # Kombiniere Query mit Kontext
         input_text = f"{query}\n\n{context}"
 
+        # Generiere mehrere Antworten
         responses = []
-        temperature_variation = [self.temperature, self.temperature + 0.5]
-        top_k_variation = [self.top_k, self.top_k + 20]
-        top_p_variation = [self.top_p, self.top_p - 0.1]
-        max_new_tokens_variation = [50, 70]
-
         for i in range(num_responses):
-            torch.manual_seed(42 + i)  # Unterschiedlicher Seed für jede Antwort
-            inputs = self.tokenizer(input_text, return_tensors="pt", truncation=True, max_length=self.maxLength)
+            torch.manual_seed(42 + i)  # Unterschiedlicher Seed für Diversität
+            inputs = self.tokenizer(input_text, return_tensors="pt", truncation=True)
             input_ids = inputs.input_ids
 
             with torch.no_grad():
                 output = self.model.generate(
                     input_ids=input_ids,
-                    max_new_tokens=max_new_tokens_variation[i],
-                    do_sample=self.doSample,
-                    temperature=temperature_variation[i],
-                    top_k=top_k_variation[i],
-                    top_p=top_p_variation[i],
-                    repetition_penalty=self.repetitionPenalty,
+                    max_new_tokens=max_response_length + (5 * i),  # Variiere Länge
+                    do_sample=True,
+                    temperature=1.0 + (0.5 * i),  # Variiere Temperatur
+                    top_k=50 + (10 * i),  # Variiere top_k
+                    top_p=0.9 - (0.1 * i),  # Variiere top_p
+                    repetition_penalty=1.2 + (0.1 * i),  # Variiere Penalty
                     pad_token_id=self.tokenizer.pad_token_id
                 )
-            responses.append(self.tokenizer.decode(output[0], skip_special_tokens=True))
+            decoded_output = self.tokenizer.decode(output[0], skip_special_tokens=True)
+            truncated_output = " ".join(decoded_output.split()[:max_response_length])  # Harte Begrenzung
+            responses.append(truncated_output)
         return responses
 
-    def answer_with_choice(self, query, articles_path):
-        """Generiert zwei Antworten und fragt den Nutzer nach der besseren."""
-        responses = self.generate_responses(query, articles_path, num_responses=2)
+    def manual_training_with_articles(self, feedback_file, articles_path):
+        """Manuelle Eingabe und Auswahl der besten Antworten basierend auf Artikeln."""
+        feedback_data = []
+        articles = self.load_cleaned_articles(articles_path)
 
-        print("\nResponse 1:")
-        print(responses[0])
-        print("\nResponse 2:")
-        print(responses[1])
+        while True:
+            # Eingabe des Querys
+            query = input("Enter your query (or type 'exit' to stop): ").strip()
+            if query.lower() == "exit":
+                break
 
-        choice = input("Which response is better? (1/2): ").strip()
-        chosen_response = responses[0] if choice == "1" else responses[1]
-        print("\nChosen Response:")
-        print(chosen_response)
+            # Generiere zwei Antworten basierend auf Artikeln
+            responses = self.generate_responses(query, articles, 2, 40)
+            print("\nResponse 1:")
+            print(responses[0])
+            print("\nResponse 2:")
+            print(responses[1])
 
-        return chosen_response
+            # Auswahl der besten Antwort oder Eingabe einer eigenen
+            choice = input("Choose the best response (1/2) or enter your own response: ").strip()
+            if choice == "1":
+                selected_response = responses[0]
+            elif choice == "2":
+                selected_response = responses[1]
+            else:
+                selected_response = choice  # Manuell eingegebene Antwort
 
+            # Speichern der Trainingsdaten
+            feedback_data.append({"query": query, "response": selected_response})
+            print("[INFO] Response saved for training.\n")
+
+        # Speichere die gesammelten Feedback-Daten
+        with open(feedback_file, "w", encoding="utf-8") as f:
+            for entry in feedback_data:
+                f.write(json.dumps(entry) + "\n")
+        print(f"[INFO] All feedback saved to {feedback_file}.")
 
 if __name__ == "__main__":
     ai = AI()
+
+    feedback_file = "./manual_feedback.jsonl"
     articles_path = "./resources/processed/Ancient Rome_cleaned.json"
 
-    # Query per Hand eingeben
-    query = input("Please enter your query: ")
-
-    # Generiere Antworten und lasse den Nutzer auswählen
-    ai.answer_with_choice(query, articles_path)
+    # Starte manuelle Trainingsdaten-Erstellung basierend auf Artikeln
+    ai.manual_training_with_articles(feedback_file, articles_path)
