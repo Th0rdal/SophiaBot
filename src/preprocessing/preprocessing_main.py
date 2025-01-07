@@ -6,7 +6,6 @@ from utils import load_data
 from pathlib import Path
 
 wiki_category = "Ancient Rome" #category des wikipedia downloads
-top_article_count = 5 #anzahl der artikel auf die gefiltert werden soll
 
 # Projekt-Root relativ zu diesem Skript
 project_root = Path(__file__).parent.parent.parent
