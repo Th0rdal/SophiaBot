@@ -4,7 +4,8 @@ from clean import clean_text, save_cleaned_data
 from likelihood import *
 from utils import load_data
 
-wiki_category = "Ancient Rome"
+wiki_category = "Ancient Rome" #category des wikipedia downloads
+top_article_count = 5 #anzahl der artikel auf die gefiltert werden soll
 
 def main():
     # Beispiel: Wikipedia-Daten herunterladen
@@ -50,9 +51,8 @@ def main():
     # Prompt definieren
     prompt = "What are important kinds of philosophy?"
 
-    # Titel-basiertes Filtern durchführen
-    top_n = 5
-    filtered_articles = filter_titles_by_prompt(articles, prompt, top_n=top_n)
+
+    filtered_articles = filter_titles_by_prompt(articles, prompt, top_n=top_article_count)
 
     # Ergebnisse anzeigen
     print(f"[INFO] Top {top_n} Artikel basierend auf Titeln:")

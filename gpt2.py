@@ -6,6 +6,7 @@ class AI:
         self.modelName = "gpt2"
         self.tokenizer = AutoTokenizer.from_pretrained(self.modelName)
         self.model = AutoModelForCausalLM.from_pretrained(self.modelName)
+        self.tokenizer.pad_token = self.tokenizer.eos_token  # Explizit Pad-Token setzen
 
         self.temperature = 1.0
         self.maxLength = 100
