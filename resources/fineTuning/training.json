@@ -4,5 +4,11 @@
         "ai1": "What is stoicism?\n\nStoicism is a school of Hellenistic philosophy that flourished in Ancient Greece and Ancient Rome. The Stoics believed that the practice of virtue is enough to achieve eudaimonia a welllived life. The Stoics identified the path to achieving it with a life spent practicing the four cardinal virtues in everyday life  prudence, fortitude, temperance, and justice  as well as living in accordance with nature. It was founded in the ancient Agora region where one could live according only to his own",
         "ai2": "What is stoicism?\n\nStoicism is a school of Hellenistic philosophy that flourished in Ancient Greece and Ancient Rome. The Stoics believed that the practice of virtue is enough to achieve eudaimonia a welllived life. The Stoics identified the path to achieving it with a life spent practicing the four cardinal virtues in everyday life  prudence, fortitude, temperance, and justice  as well as living in accordance with nature. It was founded in the ancient Agora region by Ptolemy IV (Arist",
         "correct_answer": "ai1"
+    },
+    {
+        "prompt": "What is stoicism",
+        "ai1": "What is stoicism\n\nStoicism is a school of Hellenistic philosophy that flourished in Ancient Greece and Ancient Rome. The Stoics believed that the practice of virtue is enough to achieve eudaimonia a welllived life. The Stoics identified the path to achieving it with a life spent practicing the four cardinal virtues in everyday life  prudence, fortitude, temperance, and justice  as well as living in accordance with nature. It was founded in the ancient Agora of Macedonia between 270 B .",
+        "ai2": "What is stoicism\n\nStoicism is a school of Hellenistic philosophy that flourished in Ancient Greece and Ancient Rome. The Stoics believed that the practice of virtue is enough to achieve eudaimonia a welllived life. The Stoics identified the path to achieving it with a life spent practicing the four cardinal virtues in everyday life  prudence, fortitude, temperance, and justice  as well as living in accordance with nature. It was founded in the ancient Agora of Parma (modern Athens), where they were known",
+        "correct_answer": "ai1"
     }
 ]

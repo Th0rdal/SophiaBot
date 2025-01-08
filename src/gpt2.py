@@ -7,7 +7,9 @@ import json
 import os
 from pathlib import Path
 import matplotlib.pyplot as plt
-import sys
+from lime.lime_text import LimeTextExplainer
+from transformers import GPT2Tokenizer, GPT2LMHeadModel
+import torch
 
 
 # Projekt-Root relativ zu diesem Skript hinzufügen
@@ -97,6 +99,11 @@ class AI:
             response = self.answer(user_input)
             print(f"Bot: {response}")
 
+    def explain(self, prompt, maxWords=10, maxPossibilitiesPerWord=5):
+        self.showOutputProbability(prompt, maxWords, maxPossibilitiesPerWord)
+        self.showAttentionWeights(prompt)
+        self.showOutputWithLime(prompt)
+
     def showOutputProbability(self, prompt, maxWords=10, maxPossibilitesPerWord=5):
 
         # Tokenize input
@@ -154,8 +161,20 @@ class AI:
         plt.yticks(range(len(tokens)), tokens)
         plt.show()
 
-    def showOutputWithLime(self):
-        pass
+    def showOutputWithLime(self, prompt):
+        # Initialize the LimeTextExplainer
+        explainer = LimeTextExplainer(class_names=["Generated Text"])
+
+
+        # Use LIME to explain the prediction
+        exp = explainer.explain_instance(prompt, self.predict)
+
+        # Option 1: Print the explanation in the terminal
+        print("\nLIME Explanation (Terminal Output):")
+        explanation_list = exp.as_list()
+        for feature, weight in explanation_list:
+            print(f"{feature}: {weight:.4f}")
+
 
     def train(self, dataset_name="wikitext", split="train", epochs=1, batch_size=8):
         # Load the dataset from the JSON file
@@ -256,10 +275,24 @@ class AI:
         tokens = self.tokenizer.encode(context, truncation=True, max_length=max_tokens)
         return self.tokenizer.decode(tokens, skip_special_tokens=True)
 
+    def predict(self, texts):
+        # Convert the input texts to token IDs
+        input_ids = self.tokenizer(texts, return_tensors="pt", padding=True, truncation=True)["input_ids"]
+        with torch.no_grad():
+            outputs = self.model(input_ids)
+
+        # Get the logits (raw predictions)
+        logits = outputs.logits
+
+        # Convert logits to probabilities using softmax
+        probs = torch.softmax(logits[:, -1, :], dim=-1)
+
+        # Return probabilities as a list of lists
+        return probs.cpu().numpy()
+
 # Start the chat
 if __name__ == '__main__':
     ai = AI()
     #ai.chat()
     #ai.train(epochs=3, batch_size=4)
-    #ai.showOutputProbability("The weather is")
-    ai.showAttentionWeights("The weather today is nice!")
+    ai.explain("The weather is")
