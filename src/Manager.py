@@ -3,6 +3,11 @@ from datetime import datetime
 import dataManager
 from gpt2 import AI
 import random, os
+from pathlib import Path
+
+# Projekt-Root relativ zu diesem Skript hinzufügen
+project_root = Path(__file__).parent.parent
+training_path = project_root / "resources" / "fineTuning" / "training.json"
 
 class Manager:
 
@@ -12,7 +17,7 @@ class Manager:
         self.ai2 = None
         self.ai = AI()
 
-        self.dataPath = "../resources/fineTuning/training.json"
+        self.dataPath = training_path
         self.getTrainingDataProbability = 1
         self.getTrainingDataFlag = False
         self.trainingThreshold = 10
