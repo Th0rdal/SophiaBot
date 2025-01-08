@@ -1,3 +1,4 @@
+#gpt2.py
 from datasets import Dataset
 from transformers import AutoTokenizer, AutoModelForCausalLM, TrainingArguments
 import torch
@@ -5,17 +6,23 @@ from transformers import Trainer
 import json
 import os
 from pathlib import Path
+import sys
 
-# Projekt-Root relativ zu diesem Skript
+
+# Projekt-Root relativ zu diesem Skript hinzufügen
 project_root = Path(__file__).parent.parent
 
+# Importiere aus preprocessing
+from preprocessing.preprocessing_main import wiki_category
+
 # Relativer Pfad zur Datei
-file_path = project_root / "resources" / "fineTuning" / "training.json"
+file_path_training = project_root / "resources" / "fineTuning" / "training.json"
+file_path_cleaned_articles = project_root / "resources" / "processed" / f"{wiki_category}_cleaned.json"
 
 class AI:
     def __init__(self):
         self.modelName = "gpt2"
-        self.save_path = "./" + self.modelName + "-finetuned"
+        self.save_path = project_root / "src" / f"{self.modelName}-finetuned"
 
         self.load()
 
@@ -38,7 +45,7 @@ class AI:
         self.tokenizer.pad_token = self.tokenizer.eos_token
 
     def answer(self, query):
-        articles = self.load_cleaned_articles("./resources/processed/Ancient Rome_cleaned.json")
+        articles = self.load_cleaned_articles(file_path_cleaned_articles)
 
         # Filtere relevante Artikel
         filtered_articles = self.filter_articles_by_query(articles, query, top_n=3)
@@ -80,7 +87,7 @@ class AI:
 
     def train(self, dataset_name="wikitext", split="train", epochs=1, batch_size=8):
         # Load the dataset from the JSON file
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path_training, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         # Convert the JSON data to a HuggingFace Dataset

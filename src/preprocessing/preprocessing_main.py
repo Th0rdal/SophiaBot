@@ -1,8 +1,7 @@
 # preprocessing_main.py
-from download_wiki import fetch_wikipedia_articles
-from clean import clean_text, save_cleaned_data
-from likelihood import *
-from utils import load_data
+from .download_wiki import fetch_wikipedia_articles
+from .clean import clean_text, save_cleaned_data
+from .utils import load_data
 from pathlib import Path
 
 wiki_category = "Ancient Rome" #category des wikipedia downloads

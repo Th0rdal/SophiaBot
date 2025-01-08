@@ -1,7 +1,7 @@
 import json
 import re
 import os
-from utils import *
+from .utils import *
 
 def clean_text(text):
     """Bereinigt den Text: entfernt unnötige Whitespaces und Sonderzeichen."""

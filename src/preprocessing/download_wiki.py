@@ -1,3 +1,4 @@
+#download_wiki.py
 import requests
 import json
 from pathlib import Path
@@ -37,7 +38,7 @@ def fetch_wikipedia_articles(category_name, max_articles, language="en"):
         articles.append({"title": page_data.get("title"), "text": page_data.get("extract")})
 
     # Speichern
-    output_file = project_root / "resources" / "processed" / f"{category_name}_dump.json"
+    output_file = project_root / "resources" / "raw" / f"{category_name}_dump.json"
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(articles, f, ensure_ascii=False, indent=4)
     print(f"Saved {len(articles)} articles to {output_file}")
