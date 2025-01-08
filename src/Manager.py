@@ -134,9 +134,6 @@ if __name__ == '__main__':
     print("Finished preprocessing")
 
     m = Manager()
-    m.answer("was ist rom")
-    m.answer("1")
-    exit(0)
 
     aiCallFunction = m.answer
     explType = None
