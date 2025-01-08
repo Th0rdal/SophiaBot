@@ -3,6 +3,12 @@
 import json
 
 def write(message, path):
+    """
+    Writes the message to the training dataset. Expects a json file with at least a [] inside.
+    :param message: The feedback data
+    :param path: The path to the training data file
+    :return: None
+    """
     with open(path, 'rb+') as file:
         file.seek(0, 2) # set cursor to end of file
 
@@ -28,6 +34,11 @@ def write(message, path):
         file.write(b"\n]")
 
 def count(path):
+    """
+    Counts the feedback data in the training file
+    :param path: The path to the training data file
+    :return: The number of feedback data in the training file
+    """
     count = 0
     with open(path, 'r') as file:
         # Load the file as a JSON array

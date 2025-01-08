@@ -4,5 +4,7 @@
     "target_probability": 0.05,
     "initial_probability": 1,
     "training_count": 0,
-    "decay_rate": 0.009986
+    "decay_rate": 0.009986,
+    "epochs" : 1,
+    "batch_size" : 10
 }

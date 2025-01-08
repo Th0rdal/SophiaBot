@@ -25,7 +25,6 @@ file_path_cleaned_articles = project_root / "resources" / "processed" / f"{wiki_
 class AI:
     def __init__(self):
         self.modelName = "gpt2"
-        self.save_path = "./" + self.modelName + "-finetuned"
         self.prePromt = "Always give all sources used"
         self.save_path = project_root / "src" / f"{self.modelName}-finetuned"
 
@@ -40,6 +39,10 @@ class AI:
         self.max_new_tokens = 10
 
     def load(self):
+        """
+        Loads the model from self.save_path if it exists, otherwise from HuggingFace
+        :return: None
+        """
         if os.path.exists(self.save_path):
             print("Found saved model")
             self.tokenizer = AutoTokenizer.from_pretrained(self.save_path)
@@ -51,6 +54,11 @@ class AI:
         self.tokenizer.pad_token = self.tokenizer.eos_token
 
     def answer(self, query):
+        """
+        Calculates an answer to the given query based on information from the processed data.
+        :param query: Userquery
+        :return: The answer of the AI
+        """
         articles = self.load_cleaned_articles(file_path_cleaned_articles)
 
         # Filtere relevante Artikel
@@ -87,25 +95,26 @@ class AI:
             )
         return self.tokenizer.decode(output[0], skip_special_tokens=True)
 
-    # this should not be here
-    def chat(self):
-        print("Chat with GPT-2 (type 'exit' to stop):")
-        while True:
-            user_input = input("You: ")
-            if user_input.lower() == "exit":
-                break
-
-            # Encode the input and generate a response
-            response = self.answer(user_input)
-            print(f"Bot: {response}")
-
     def explain(self, prompt, maxWords=10, maxPossibilitiesPerWord=5):
+        """
+        Executes all explain functions for the given query
+        :param prompt: Userquery
+        :param maxWords: maximum number of words to predict
+        :param maxPossibilitiesPerWord: maximum number of possible words per word
+        :return: None
+        """
         self.showOutputProbability(prompt, maxWords, maxPossibilitiesPerWord)
         self.showAttentionWeights(prompt)
         self.showOutputWithLime(prompt)
 
     def showOutputProbability(self, prompt, maxWords=10, maxPossibilitesPerWord=5):
-
+        """
+        Calculates and prints the output probabilities for the next "maxWords" entries and gives "maxPossibilitiesPerWord" options per entry.
+        :param prompt: Userquery
+        :param maxWords: maximum number of words to predict
+        :param maxPossibilitesPerWord: maximum number of possible words per word
+        :return: None
+        """
         # Tokenize input
         input_ids = self.tokenizer.encode(prompt, return_tensors='pt')
 
@@ -137,6 +146,11 @@ class AI:
             output_tokens = torch.cat((output_tokens, next_token), dim=1)
 
     def showAttentionWeights(self, prompt):
+        """
+        Creates a heatmap of the attention weights for the given query.
+        :param prompt: Userquery
+        :return: None
+        """
         input_ids = self.tokenizer.encode(prompt, return_tensors="pt")
 
         # Forward pass
@@ -162,6 +176,11 @@ class AI:
         plt.show()
 
     def showOutputWithLime(self, prompt):
+        """
+        Calculates the impact each word had for the output.
+        :param prompt: Userquery
+        :return: None
+        """
         # Initialize the LimeTextExplainer
         explainer = LimeTextExplainer(class_names=["Generated Text"])
 
@@ -176,7 +195,13 @@ class AI:
             print(f"{feature}: {weight:.4f}")
 
 
-    def train(self, dataset_name="wikitext", split="train", epochs=1, batch_size=8):
+    def train(self, epochs=1, batch_size=8):
+        """
+        Trains the AI model and saves the fine-tuned model in the save_path.
+        :param epochs: Amount of epochs to train the model
+        :param batch_size: Amount of data per epoch
+        :return: None
+        """
         # Load the dataset from the JSON file
         with open(file_path_training, "r", encoding="utf-8") as f:
             data = json.load(f)

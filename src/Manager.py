@@ -40,17 +40,31 @@ class Manager:
         self.trainingThreshold = data["training_threshold"]
         self.trainingDataCounter = dataManager.count(self.dataPath)
         self.answerList = []
+        self.targetProbability = data["target_probability"]
+        self.initialProbability = data["initial_probability"]
+        self.count = data["training_count"]
+        self.decayRate = data["decay_rate"]
+        self.epochs = data["epochs"]
+        self.batch_size = data["batch_size"]
+        if self.epochs * self.batch_size != self.trainingThreshold:
+            userinput = input("Epoch * batch size does not equal the training threshold. This means that there is either too much or too little training data. Use default settings? (Y/n)\n")
+            if userinput == "y" or userinput == "Y":
+                self.epochs = 1
+                self.batch_size = self.trainingThreshold
+            else:
+                exit(0)
 
         self.explanationType = Explanationtype(4)
         self.maxWords = 10
         self.maxPossibilitiesPerWord = 5
 
-        self.targetProbability = data["target_probability"]
-        self.initialProbability = data["initial_probability"]
-        self.count = data["training_count"]
-        self.decayRate = data["decay_rate"]
 
     def answer(self, text):
+        """
+        Calculates and returns the answer of the AI. Additionally, It includes logic to get training data from user feedback.
+        :param text: The prompt from the user
+        :return: The result of the AI and a bool indicating if the AI is sending a user feedback answer or not
+        """
         if self.getTrainingDataFlag:
             data = {"prompt": self.lastTest, "ai1": self.ai1, "ai2": self.ai2}
             if text == "1":
@@ -71,6 +85,11 @@ class Manager:
                 return self.ai.answer(text), False
 
     def train(self, text):
+        """
+        Fetches 2 answers from the AI and returns them. This is for the user feedback.
+        :param text: Prompt from the user
+        :return: String with 2 AI answers
+        """
         self.getTrainingDataFlag = True
         self.lastTest = text
         self.ai1 = self.ai.answer(text)
@@ -83,7 +102,11 @@ class Manager:
         return result
 
     def trainAI(self):
-        self.ai.train()
+        """
+        Logic to train and reload the AI model. Starts a new training.json file.
+        :return: None
+        """
+        self.ai.train(self.epochs, self.batch_size)
         self.ai.load()
         # Erstelle neuen Pfad mit Datum
         new_path = self.dataPath.parent / f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_training.json"
@@ -95,6 +118,10 @@ class Manager:
         self.calculateDelay()
 
     def calculateDelay(self):
+        """
+        Calculates the current probability of asking for user feedback and writes it into the config
+        :return: None
+        """
         self.count += 1
         self.getTrainingDataProbability = max(self.initialProbability * math.exp(self.count * self.decayRate * -1), self.targetProbability)
         with open(config_path, "r+") as file:
@@ -106,6 +133,11 @@ class Manager:
             file.write(json.dumps(data, indent=4))
 
     def explain(self, prompt):
+        """
+        Explains the output of the AI based on what the value of self.explanationType is.
+        :param prompt: The prompt from the user
+        :return: The answer and False
+        """
         answer = self.ai.answer(prompt)
         if self.explanationType == Explanationtype.ALL:
             self.ai.explain(prompt, self.maxWords, self.maxPossibilitiesPerWord)
@@ -118,6 +150,10 @@ class Manager:
         return answer, False
 
     def resetConfig(self):
+        """
+        Resets the config file
+        :return: None
+        """
         data = {
                 "get_training_data_probability": 1,
                 "training_threshold": 10,
