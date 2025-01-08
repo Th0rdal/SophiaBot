@@ -43,10 +43,11 @@ class Manager:
             self.getTrainingDataFlag = False
             if self.trainingDataCounter >= self.trainingThreshold:
                 self.trainAI()
-        if random.random() < self.getTrainingDataProbability:
-            return self.train(text)
         else:
-            return self.ai.answer(text)
+            if random.random() < self.getTrainingDataProbability:
+                return self.train(text)
+            else:
+                return self.ai.answer(text)
 
     def train(self, text):
         self.getTrainingDataFlag = True
