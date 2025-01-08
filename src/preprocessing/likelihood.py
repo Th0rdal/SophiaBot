@@ -74,9 +74,9 @@ def main():
     filtered_articles = filter_titles_by_prompt(articles, prompt, top_n=top_n)
 
     # Ergebnisse anzeigen
-    print(f"[INFO] Top {top_n} Artikel basierend auf Titeln:")
-    for article, score in filtered_articles:
-        print(f"Title: {article['title']}, Log-Likelihood: {score:.4f}")
+    # print(f"[INFO] Top {top_n} Artikel basierend auf Titeln:")
+    # for article, score in filtered_articles:
+    #    print(f"Title: {article['title']}, Log-Likelihood: {score:.4f}")
 
     # Artikeltexte als Tokens speichern
     token_output_file = "./processed/History_tokenized.json"

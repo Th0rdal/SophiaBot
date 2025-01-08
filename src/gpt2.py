@@ -77,7 +77,7 @@ class AI:
             output = self.model.generate(
                 input_ids=input_ids,
                 attention_mask=attention_mask,
-                max_new_tokens=10,  # Anzahl der Tokens, die zusätzlich generiert werden
+                max_new_tokens=self.max_new_tokens,
                 do_sample=self.doSample,
                 temperature=self.temperature,
                 top_k=self.top_k,
@@ -264,9 +264,9 @@ class AI:
         top_articles = scores[:top_n]
 
         # Zeige die Titel der gefilterten Artikel an
-        print(f"[INFO] Gefilterte Artikel basierend auf dem Query '{query}':")
-        for article, score in top_articles:
-            print(f"  - {article['title']} (Score: {score:.4f})")
+        # print(f"[INFO] Gefilterte Artikel basierend auf dem Query '{query}':")
+        # for article, score in top_articles:
+        #    print(f"  - {article['title']} (Score: {score:.4f})")
 
         return top_articles
 

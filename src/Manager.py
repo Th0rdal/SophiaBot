@@ -10,7 +10,7 @@ from preprocessing.preprocessing_main import preprocessing_main
 
 import json
 
-from src.Explanationtype import Explanationtype
+from Explanationtype import Explanationtype
 
 # Projekt-Root relativ zu diesem Skript hinzufügen
 project_root = Path(__file__).parent.parent
