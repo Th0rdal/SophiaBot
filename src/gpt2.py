@@ -191,7 +191,7 @@ class AI:
         def tokenize_function(examples):
             inputs = [
                 f"{prompt} {answer}"
-                for prompt, answer in zip(examples["prompt"], examples["correct_answer"])
+                for prompt, answer in zip(examples["prompt"], examples[examples["correct_answer"]])
             ]
             tokenized = self.tokenizer(
                 inputs,
