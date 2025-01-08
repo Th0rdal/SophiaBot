@@ -1,6 +1,8 @@
 #Manager.py
-
+import math
 from datetime import datetime
+
+from dill.source import indent
 
 import dataManager
 from gpt2 import AI
@@ -15,6 +17,12 @@ from Explanationtype import Explanationtype
 # Projekt-Root relativ zu diesem Skript hinzufügen
 project_root = Path(__file__).parent.parent
 training_path = project_root / "resources" / "fineTuning" / "training.json"
+config_path = project_root / "config.json"
+
+
+def calculateDecayRate(initialValue, targetValue, count):
+    return - (math.log(targetValue / initialValue)/count)
+
 
 class Manager:
 
@@ -24,16 +32,23 @@ class Manager:
         self.ai2 = None
         self.ai = AI()
 
+        with open(config_path) as json_file:
+            data = json.load(json_file)
         self.dataPath = training_path
-        self.getTrainingDataProbability = 1
+        self.getTrainingDataProbability = data["get_training_data_probability"]
         self.getTrainingDataFlag = False
-        self.trainingThreshold = 10
+        self.trainingThreshold = data["training_threshold"]
         self.trainingDataCounter = dataManager.count(self.dataPath)
         self.answerList = []
 
         self.explanationType = Explanationtype(4)
         self.maxWords = 10
         self.maxPossibilitiesPerWord = 5
+
+        self.targetProbability = data["target_probability"]
+        self.initialProbability = data["initial_probability"]
+        self.count = data["training_count"]
+        self.decayRate = data["decay_rate"]
 
     def answer(self, text):
         if self.getTrainingDataFlag:
@@ -71,12 +86,24 @@ class Manager:
         self.ai.train()
         self.ai.load()
         # Erstelle neuen Pfad mit Datum
-        new_path = self.dataPath.parent / f"{datetime.now().strftime('%Y-%m-%d')}_training.json"
+        new_path = self.dataPath.parent / f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_training.json"
         # Verschiebe die Datei
         os.rename(self.dataPath, new_path)
         # Initialisiere eine leere JSON-Datei
         with open(self.dataPath, 'w') as file:
             json.dump([], file, indent=4)
+        self.calculateDelay()
+
+    def calculateDelay(self):
+        self.count += 1
+        self.getTrainingDataProbability = max(self.initialProbability * math.exp(self.count * self.decayRate * -1), self.targetProbability)
+        with open(config_path, "r+") as file:
+            data = json.load(file)
+            file.seek(0)
+            file.truncate(0)
+            data["get_training_data_probability"] = self.getTrainingDataProbability
+            data["training_count"] = self.count
+            file.write(json.dumps(data, indent=4))
 
     def explain(self, prompt):
         answer = self.ai.answer(prompt)
@@ -90,11 +117,27 @@ class Manager:
             self.ai.showOutputWithLime(prompt)
         return answer, False
 
+    def resetConfig(self):
+        data = {
+                "get_training_data_probability": 1,
+                "training_threshold": 10,
+                "target_probability": 0.05,
+                "initial_probability": 1,
+                "training_count": 0,
+                "decay_rate": 0.009986
+        }
+        with open(config_path, "w") as file:
+            json.dump(data, file, indent=4)
+
 if __name__ == '__main__':
     preprocessing_main()
     print("Finished preprocessing")
 
     m = Manager()
+    m.answer("was ist rom")
+    m.answer("1")
+    exit(0)
+
     aiCallFunction = m.answer
     explType = None
 
