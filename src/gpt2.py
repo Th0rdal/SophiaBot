@@ -191,7 +191,7 @@ class AI:
         def tokenize_function(examples):
             inputs = [
                 f"{prompt} {answer}"
-                for prompt, answer in zip(examples["prompt"], examples[examples["correct_answer"]])
+                for prompt, answer in zip(examples["prompt"], examples["correct_answer"])
             ]
             tokenized = self.tokenizer(
                 inputs,
@@ -295,4 +295,5 @@ if __name__ == '__main__':
     ai = AI()
     #ai.chat()
     #ai.train(epochs=3, batch_size=4)
-    ai.explain("The weather is")
+    #ai.explain("The weather is")
+    ai.train()

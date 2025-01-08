@@ -95,7 +95,7 @@ if __name__ == '__main__':
     print("Finished preprocessing")
 
     m = Manager()
-    aiCallFunction = None #m.answer
+    aiCallFunction = m.answer
     explType = None
 
     userinput = input("Should AI output explanation be added? (y/n):\n")
@@ -126,7 +126,6 @@ if __name__ == '__main__':
         userinput = input("Ask the AI a question:\n")
         if userinput == "END":
             break
-        aiCallFunction = m.answer
         answer, isTraining = aiCallFunction(userinput)
         print(answer)
         if isTraining:
@@ -134,7 +133,6 @@ if __name__ == '__main__':
             if userinput != "1" and userinput != "2":
                 print("None of the options was chosen. Data collection for training failed.\n")
                 continue
-            aiCallFunction = m.train
             aiCallFunction(userinput)
 
         print("\n")
