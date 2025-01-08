@@ -63,8 +63,8 @@ class Manager:
         self.answerList.append(self.ai1)
         self.answerList.append(self.ai2)
         result = ""
-        result += "Option 1:\n" + self.ai1 + "\n"
-        result += "Option 2:\n" + self.ai2 + "\n"
+        result += "--------------------------------------------------------------\nAnswer Option 1:\n" + self.ai1 + "\n"
+        result += "--------------------------------------------------------------\nAnswer Option 2:\n" + self.ai2 + "\n"
         return result
 
     def trainAI(self):
@@ -95,10 +95,10 @@ if __name__ == '__main__':
     print("Finished preprocessing")
 
     m = Manager()
-    aiCallFunction = None
+    aiCallFunction = None #m.answer
     explType = None
 
-    userinput = input("Should AI output explanation be added? (y/N):\n")
+    userinput = input("Should AI output explanation be added? (y/n):\n")
     if userinput == "y" or userinput == "Y" or userinput == "yes" or userinput == "Yes": # add explanation to responses
         explanationTypeText = "What type of output explanation should be added?:\nOutput probability (1)\nAttention weights (2)\nLime (3)\nAll of the above (4)\n"
         while True:
@@ -126,11 +126,15 @@ if __name__ == '__main__':
         userinput = input("Ask the AI a question:\n")
         if userinput == "END":
             break
+        aiCallFunction = m.answer
         answer, isTraining = aiCallFunction(userinput)
         print(answer)
         if isTraining:
-            userinput = input("Please choose between the 2 options:\n")
+            userinput = input("Feedback: Please choose between the 2 options:\n")
             if userinput != "1" and userinput != "2":
                 print("None of the options was chosen. Data collection for training failed.\n")
                 continue
+            aiCallFunction = m.train
             aiCallFunction(userinput)
+
+        print("\n")
