@@ -6,7 +6,6 @@ from transformers import Trainer
 import json
 import os
 from pathlib import Path
-import sys
 
 
 # Projekt-Root relativ zu diesem Skript hinzufügen
@@ -53,17 +52,25 @@ class AI:
 
         # Berechne verfügbare Länge für den Kontext
         query_tokens = self.tokenizer.encode(query, truncation=True)
-        max_context_tokens = 512 - len(query_tokens)
+        max_context_tokens = self.maxLength - len(query_tokens) - 2  # 2 für Trennzeichen (\n\n)
         context = self.truncate_context(context, max_context_tokens)
 
         # Kombiniere Query mit Kontext
         input_text = f"{query}\n\n{context}"
+        inputs = self.tokenizer(input_text, return_tensors="pt", padding=True, truncation=True)
+        input_ids = inputs["input_ids"]
+        attention_mask = inputs["attention_mask"]
 
-        input_ids = self.tokenizer.encode(input_text, return_tensors="pt")
+        # Sicherheitscheck für Eingabelänge
+        if input_ids.size(1) > self.maxLength:
+            raise ValueError(f"Input length exceeds max_length ({self.maxLength}). Adjust query or context.")
+
+        # Modellgenerierung
         with torch.no_grad():
             output = self.model.generate(
-                input_ids=input_ids,  # Explicitly set input_ids
-                max_length=self.maxLength,
+                input_ids=input_ids,
+                attention_mask=attention_mask,
+                max_new_tokens=10,  # Anzahl der Tokens, die zusätzlich generiert werden
                 do_sample=self.doSample,
                 temperature=self.temperature,
                 top_k=self.top_k,

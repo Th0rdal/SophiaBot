@@ -1,9 +1,13 @@
+#Manager.py
+
 from datetime import datetime
 
 import dataManager
 from gpt2 import AI
 import random, os
 from pathlib import Path
+
+import json
 
 # Projekt-Root relativ zu diesem Skript hinzufügen
 project_root = Path(__file__).parent.parent
@@ -58,10 +62,16 @@ class Manager:
     def trainAI(self):
         self.ai.train()
         self.ai.load()
-        os.rename(self.dataPath, self.dataPath.rsplit('/', 1)[0] + "/" + datetime.now().strftime("%Y-%m-%d") + "_training.json")
-        open(self.dataPath, 'w').close()
+        # Erstelle neuen Pfad mit Datum
+        new_path = self.dataPath.parent / f"{datetime.now().strftime('%Y-%m-%d')}_training.json"
+        # Verschiebe die Datei
+        os.rename(self.dataPath, new_path)
+        # Initialisiere eine leere JSON-Datei
+        with open(self.dataPath, 'w') as file:
+            json.dump([], file, indent=4)
+
 
 if __name__ == '__main__':
     m = Manager()
-    print(m.answer("Was ist der unterschied zwischen sonne und mond"))
+    print(m.answer("What is stoicism?"))
     print(m.answer("1"))

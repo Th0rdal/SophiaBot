@@ -1,27 +1,32 @@
+#dataManager.py
+
 import json
 
 def write(message, path):
-    with open(path, 'rb+') as file:
-        file.seek(0, 2) # set cursor to end of file
+    try:
+        # Lade bestehende Daten
+        if not path.exists() or path.stat().st_size == 0:
+            data = []  # Initialisiere leeres Array, wenn Datei leer ist
+        else:
+            with open(path, 'r') as file:
+                data = json.load(file)
+                if not isinstance(data, list):
+                    raise ValueError("Die JSON-Datei enthält kein Array.")
 
-        while True:
-            file.seek(file.tell() - 1)
-            last_char = file.read(1)
+        # Füge neue Nachricht hinzu
+        data.append(message)
 
-            if last_char == b"]":
-                break
-            file.seek(-1, 1)
+        # Schreibe die aktualisierte Datei
+        with open(path, 'w') as file:
+            json.dump(data, file, indent=4, ensure_ascii=False)
 
-        if file.tell() > 2:
-            file.seek(file.tell() - 3)
-            file.write(b",\n\t")
+    except json.JSONDecodeError:
+        print("Fehler: Die Datei ist keine gültige JSON-Datei. Initialisiere sie neu.")
+        with open(path, 'w') as file:
+            json.dump([message], file, indent=4, ensure_ascii=False)
 
-        for char in json.dumps(message, indent=4).encode('utf-8'):
-            file.write(bytes([char]))
-            if char == ord('\n'):
-                file.write(b"\t")
-
-        file.write(b"\n]")
+    except Exception as e:
+        print(f"Unerwarteter Fehler: {e}")
 
 def count(path):
     count = 0
