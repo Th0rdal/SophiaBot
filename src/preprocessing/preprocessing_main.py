@@ -3,6 +3,7 @@ from .download_wiki import fetch_wikipedia_articles
 from .clean import clean_text, save_cleaned_data
 from .utils import load_data
 from pathlib import Path
+import os
 
 wiki_category = "Ancient Rome" #category des wikipedia downloads
 
@@ -12,8 +13,14 @@ project_root = Path(__file__).parent.parent.parent
 # Relativer Pfad zur Datei
 input_file_for_clean = project_root / "resources" / "raw" / f"{wiki_category}_dump.json"
 output_file_after_clean = project_root / "resources" / "processed" / f"{wiki_category}_cleaned.json"
+if not os.path.exists(output_file_after_clean.parent):
+    os.makedirs(output_file_after_clean.parent)
 
-def main():
+if not os.path.exists(input_file_for_clean.parent):
+    os.makedirs(input_file_for_clean.parent)
+
+def preprocessing_main():
+
     # Beispiel: Wikipedia-Daten herunterladen
     fetch_wikipedia_articles(wiki_category, max_articles=80, language="en")
     print(f"=" * 60)
@@ -48,6 +55,3 @@ def main():
     print(f"=" * 60)
 
     # ---------------------------------------------------------------------------------
-
-if __name__ == "__main__":
-    main()

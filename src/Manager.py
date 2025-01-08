@@ -6,6 +6,7 @@ import dataManager
 from gpt2 import AI
 import random, os
 from pathlib import Path
+from preprocessing.preprocessing_main import preprocessing_main
 
 import json
 
@@ -72,6 +73,7 @@ class Manager:
 
 
 if __name__ == '__main__':
+    preprocessing_main()
     m = Manager()
     print(m.answer("What is stoicism?"))
     print(m.answer("1"))
